@@ -33,8 +33,7 @@ cd anymentor
 ```bash
 python3 -m venv venv
 
-This script handles the creation of a virtual environment and the installation of dependencies listed in `requirements.txt`.
-
+```
 #### 3. Activate the Virtual Environment
 
 Activate the newly created virtual environment:
