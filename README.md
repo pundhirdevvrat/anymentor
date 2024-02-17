@@ -53,7 +53,7 @@ To install dependencies
 
 ```bash
 
-python -r install requirement.txt
+pip install -r requirements.txt
 
 ```
 
