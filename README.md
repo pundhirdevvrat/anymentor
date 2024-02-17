@@ -20,7 +20,7 @@ Start by cloning the project to your local machine:
 
 ```bash
 git clone https://github.com/yourusername/my_telegram_bot_project.git
-cd my_telegram_bot_project
+cd my_telegram_bot_project](https://github.com/pundhirdevvrat/anymentor.git
 ```
 
 #### 2. Virtual Environment Setup
