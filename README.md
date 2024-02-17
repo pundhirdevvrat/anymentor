@@ -31,7 +31,7 @@ cd anymentor
 #### 2. Virtual Environment Setup
 
 ```bash
-python3 -m venv venv
+python -m venv venv
 
 ```
 #### 3. Activate the Virtual Environment
