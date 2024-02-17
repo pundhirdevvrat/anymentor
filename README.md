@@ -31,11 +31,7 @@ cd anymentor
 #### 2. Virtual Environment Setup
 
 ```bash
-
-Run the provided `setup.py` script to create a virtual environment and install the necessary dependencies:
-python setup.py
-
-```
+python3 -m venv venv
 
 This script handles the creation of a virtual environment and the installation of dependencies listed in `requirements.txt`.
 
@@ -54,6 +50,14 @@ Activate the newly created virtual environment:
   ```bash
   source venv/bin/activate
   ```
+
+```bash
+
+Run the provided `setup.py` script to create a virtual environment and install the necessary dependencies:
+python setup.py
+
+```
+
 
 #### 4. Bot Token Configuration
 
