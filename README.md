@@ -1,2 +1,2 @@
 # anymentor
-a telegram bot which is made for perform certain tasks
+a telegram bot that is made to perform certain tasks
