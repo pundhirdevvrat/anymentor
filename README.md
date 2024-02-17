@@ -25,7 +25,7 @@ git clone https://github.com/pundhirdevvrat/anymentor.git
 for navigate inside the folder:
 
 ```bash
-cd my_telegram_bot_project](https://github.com/pundhirdevvrat/anymentor.git
+cd anymentor
 ```
 
 #### 2. Virtual Environment Setup
