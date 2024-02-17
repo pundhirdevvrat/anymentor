@@ -1,2 +1,4 @@
 python-telegram-bot==13.7
-transformers==4.15.0
+transformers==4.33.0  # Updated to satisfy tts and audiocraft requirements
+numpy>=1.23.5         # Updated for tensorflow-intel compatibility
+tensorflow==2.15.0    # Specify tensorflow version; replace with tensorflow-intel if needed
