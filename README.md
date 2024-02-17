@@ -23,17 +23,18 @@ git clone https://github.com/yourusername/my_telegram_bot_project.git
 
 ```
 for navigate inside the folder:
+
 ```bash
 cd my_telegram_bot_project](https://github.com/pundhirdevvrat/anymentor.git
-#### 2. Virtual Environment Setup
-
 ```
 
-
-Run the provided `setup.py` script to create a virtual environment and install the necessary dependencies:
+#### 2. Virtual Environment Setup
 
 ```bash
+
+Run the provided `setup.py` script to create a virtual environment and install the necessary dependencies:
 python setup.py
+
 ```
 
 This script handles the creation of a virtual environment and the installation of dependencies listed in `requirements.txt`.
