@@ -49,11 +49,11 @@ Activate the newly created virtual environment:
   ```bash
   source venv/bin/activate
   ```
+To install dependencies
 
 ```bash
 
-Run the provided `setup.py` script to create a virtual environment and install the necessary dependencies:
-python setup.py
+python -r install requirement.txt
 
 ```
 
