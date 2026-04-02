@@ -126,7 +126,7 @@ export const lmsApi = {
   enroll: (companyId, courseId) => api.post(`/lms/companies/${companyId}/${courseId}/enroll`),
   updateProgress: (companyId, courseId, lessonId, data) =>
     api.post(`/lms/companies/${companyId}/${courseId}/lessons/${lessonId}/progress`, data),
-  getMyEnrollments: () => api.get('/lms/companies//my/enrollments'),
+  getMyEnrollments: (companyId) => api.get(`/lms/companies/${companyId}/my/enrollments`),
 };
 
 export const shopApi = {

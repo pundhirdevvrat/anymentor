@@ -267,6 +267,15 @@ const processWebhookEvent = async (gateway, event) => {
     status = event.event === 'payment.captured' ? 'PAID' :
              event.event === 'payment.failed' ? 'FAILED' : null;
 
+  } else if (gateway === 'PHONEPE') {
+    const response = event?.response;
+    if (!response) return { processed: false };
+
+    paymentId = response.transactionId || response.merchantTransactionId;
+    amount = (response.amount || 0) / 100;
+    status = response.code === 'PAYMENT_SUCCESS' ? 'PAID' :
+             response.code === 'PAYMENT_ERROR' ? 'FAILED' : null;
+
   } else if (gateway === 'STRIPE') {
     const pi = event.data?.object;
     if (!pi) return { processed: false };
