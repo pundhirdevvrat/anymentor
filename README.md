@@ -1,109 +1,221 @@
-# Python Telegram Bot with Hugging Face Integration
+# AnyMentor — Multi-Tenant SaaS Platform
 
-## Overview
+**Enterprise-grade platform for hosting multiple branded company portals under one unified admin system.**
 
-This Python Telegram bot integrates with Hugging Face's Transformers to provide intelligent responses to user messages. Designed for ease of use and extensibility, it allows developers to enhance its functionality according to their needs.
+Each company gets: LMS, E-commerce store, CRM pipeline, Analytics dashboard — all with their own branding and full data isolation.
 
-## Getting Started
+---
 
-### Prerequisites
+## Tech Stack
 
-- Python 3.6+
-- pip (Python package installer)
-- Telegram bot token (obtainable through [BotFather](https://t.me/botfather))
+| Layer | Technology |
+|-------|-----------|
+| Backend | Node.js 20 + Express.js |
+| ORM | Prisma + PostgreSQL 16 |
+| Frontend | React 18 + Vite + TailwindCSS |
+| Auth | JWT (15min) + Refresh Tokens (7d, httpOnly cookie) |
+| Payments | Razorpay (UPI/Cards/Netbanking), PhonePe Direct, UPI Deep Link, Stripe |
+| Container | Docker + Docker Compose |
+| CI/CD | GitHub Actions |
 
-### Installation
+---
 
-#### 1. Clone the Repository
-
-Start by cloning the project to your local machine:
+## Quick Start (Docker)
 
 ```bash
+# 1. Clone and setup environment
 git clone https://github.com/pundhirdevvrat/anymentor.git
-
-```
-for navigate inside the folder:
-
-```bash
 cd anymentor
+
+cp backend/.env.example backend/.env
+# Edit backend/.env — add DATABASE_URL, JWT secrets, SMTP, payment keys
+
+# 2. Start all services (PostgreSQL + Redis + Backend + Frontend)
+docker-compose up -d
+
+# 3. Run database migrations and seed demo data
+docker-compose exec backend npx prisma migrate dev
+docker-compose exec backend node prisma/seed.js
+
+# 4. Open browser
+# Frontend:    http://localhost:5173
+# API Docs:    http://localhost:3000/api/docs
+# Health:      http://localhost:3000/api/v1/health
 ```
 
-#### 2. Virtual Environment Setup
+---
+
+## Quick Start (Local Development)
 
 ```bash
-python -m venv venv
+# Requirements: Node.js 20+, PostgreSQL 16 running locally
+
+# Backend
+cd backend
+npm install
+cp .env.example .env          # Edit DATABASE_URL and JWT secrets (minimum)
+npx prisma migrate dev        # Creates all tables
+node prisma/seed.js           # Seeds demo data
+npm run dev                   # API at http://localhost:3000
+
+# Frontend (new terminal)
+cd frontend
+npm install
+npm run dev                   # UI at http://localhost:5173
+```
+
+---
+
+## Default Login Credentials (after seed)
+
+| Role | Email | Password |
+|------|-------|----------|
+| Platform Owner | owner@anymentor.com | SuperSecureOwnerPass123! |
+| Company Admin  | admin@demoacademy.com | AdminPass123! |
+
+> Live demo portal: http://localhost:5173/c/demo-academy
+
+---
+
+## Project Structure
 
 ```
-#### 3. Activate the Virtual Environment
+anymentor/
+├── backend/
+│   ├── prisma/
+│   │   ├── schema.prisma       ← All DB models
+│   │   └── seed.js             ← Demo data seeder
+│   ├── src/
+│   │   ├── config/             ← database, email, swagger, constants
+│   │   ├── middleware/         ← auth JWT, tenant isolation, rate-limit, validation
+│   │   ├── modules/            ← auth · users · companies · lms · ecommerce
+│   │   │                         crm · analytics · billing · support
+│   │   ├── services/           ← email · payment (Razorpay/PhonePe/Stripe/UPI) · storage
+│   │   └── utils/              ← logger · apiResponse · jwtHelper · pagination
+│   ├── server.js
+│   └── .env.example
+├── frontend/
+│   ├── src/
+│   │   ├── pages/              ← Landing · auth · dashboard · admin panel · portals
+│   │   ├── components/         ← Navbar · Sidebar · UI library + ParticleBackground
+│   │   ├── store/              ← Zustand (auth, company branding)
+│   │   └── services/api.js     ← All API calls (authApi, lmsApi, shopApi, crmApi...)
+│   └── vite.config.js
+├── docker-compose.yml           ← Development
+├── docker-compose.prod.yml      ← Production (Nginx + SSL)
+├── nginx.conf
+└── .github/workflows/           ← ci.yml (tests) + deploy.yml (VPS SSH)
+```
 
-Activate the newly created virtual environment:
+---
 
-- **Windows:**
+## Role Hierarchy
 
-  ```cmd
-  .\venv\Scripts\activate
-  ```
+```
+Platform Owner  → All companies, billing plans, platform-wide analytics
+  Company Admin → One company: users, branding, content, analytics, billing
+    Manager     → Content + leads for their department
+      User      → Student / Customer / Contact
+```
 
-- **Unix/Linux/macOS:**
+---
 
-  ```bash
-  source venv/bin/activate
-  ```
-To install dependencies
+## Payment Gateways
+
+| Gateway | Methods |
+|---------|---------|
+| **Razorpay** | UPI, Google Pay, PhonePe, Paytm, Cards, Netbanking, Wallets, EMI |
+| **PhonePe Direct** | PhonePe Business merchant account |
+| **UPI Deep Link** | Direct `upi://` link + auto-generated QR code |
+| **Stripe** | International credit/debit cards (USD, EUR) |
+
+Webhook endpoints: `/api/v1/webhooks/razorpay` · `/api/v1/webhooks/phonepe` · `/api/v1/webhooks/stripe`
+
+---
+
+## Brand Design System
+
+| Name | Hex | Use |
+|------|-----|-----|
+| Navy | `#1a3c6e` | Primary backgrounds, headings, navbar |
+| Gold | `#d4a017` | CTAs, buttons, highlights, accents |
+| Maroon | `#800020` | Danger, gradients, secondary accents |
+| Cream | `#f5f0e8` | Page backgrounds, card backgrounds |
+
+Fonts: **Cormorant Garamond** (headings) + **Rajdhani** (body)
+> ⚠️ NO dark blue or black colors used anywhere in the UI.
+
+---
+
+## API Documentation
+
+Swagger UI available at: `http://localhost:3000/api/docs`
+
+Base: `/api/v1` · Key endpoints:
+
+```
+POST /auth/register          Register user
+POST /auth/login             Login → access token + refresh cookie
+POST /auth/refresh           Rotate refresh token
+GET  /companies/slug/:slug   Company branding (public)
+GET  /lms/companies/:id/     Course catalog
+POST /ecommerce/:id/orders   Create order
+GET  /analytics/:id/overview Dashboard metrics
+POST /crm/:id/leads          Create lead
+POST /public/leads           Public lead capture form
+```
+
+---
+
+## Security
+
+- **bcrypt** (12 rounds) password hashing — never stored plaintext
+- **JWT rotation**: access (15min) + refresh (7d) with token reuse detection
+- **Rate limiting**: 5 req/15min on auth · 100 req/15min globally
+- **Prisma ORM**: parameterized queries — SQL injection impossible by design
+- **Zod** validation on every request body
+- **Tenant isolation**: `companyId` enforced on every database query
+- **Audit trail**: every create/update/delete logged with user + IP
+- **Helmet.js** security headers · **CORS** per company domain
+
+---
+
+## Production Deployment (VPS + Docker)
 
 ```bash
+# 1. On your VPS (Ubuntu 22.04):
+sudo apt update && sudo apt install docker.io docker-compose-plugin git -y
 
-pip install -r requirements.txt
+# 2. Clone and configure
+git clone https://github.com/pundhirdevvrat/anymentor.git /opt/anymentor
+cd /opt/anymentor
+cp backend/.env.example backend/.env.prod  # Fill all production values
 
+# 3. Start production stack
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# 4. SSL Certificate (replace yourdomain.com)
+docker-compose -f docker-compose.prod.yml run certbot certonly \
+  --webroot -w /var/www/certbot -d yourdomain.com
+
+# 5. Reload nginx
+docker-compose -f docker-compose.prod.yml restart nginx
 ```
 
+GitHub Actions auto-deploys on push to `main` (configure VPS secrets).
 
-#### 4. Bot Token Configuration
-
-Insert your Telegram bot token into `bot.py`:
-
-- Open `bot.py` with your preferred text editor.
-- Locate the line `updater = Updater("YOUR_TELEGRAM_BOT_TOKEN", use_context=True)`.
-- Replace `"YOUR_TELEGRAM_BOT_TOKEN"` with your actual bot token.
-
-### Running Your Bot
-
-With the setup complete, start your bot by running:
-
-```bash
-python bot.py
-```
-
-Interact with your bot on Telegram by sending it messages, and it will reply using responses generated by the Hugging Face model.
-
-## Features
-
-- **Text Generation**: Utilizes Hugging Face's powerful Transformers for dynamic text generation.
-- **Easy Customization**: Designed for straightforward modifications and enhancements.
-- **Cross-Platform**: Compatible with various operating systems including Windows, macOS, and Linux.
-
-## Adding Features
-
-To extend the bot's capabilities:
-
-- Explore the [Telegram Bot API](https://core.telegram.org/bots/api) for additional functionalities.
-- Incorporate more models from the [Hugging Face's `transformers` library](https://huggingface.co/transformers/).
+---
 
 ## Contributing
 
-Contributions are welcome! To contribute:
+1. Fork the project
+2. Create feature branch: `git checkout -b feature/YourFeature`
+3. Commit: `git commit -m 'Add YourFeature'`
+4. Push: `git push origin feature/YourFeature`
+5. Open a Pull Request
 
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a pull request.
+---
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Acknowledgments
-
-- [Hugging Face Transformers](https://huggingface.co/transformers/)
-- [python-telegram-bot](https://python-telegram-bot.org/)
+GNU GPL v3 — See [LICENSE](LICENSE)
