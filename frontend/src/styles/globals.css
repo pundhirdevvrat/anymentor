@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties (company branding override) ────── */
+:root {
+  --color-primary: #1a3c6e;
+  --color-gold: #d4a017;
+  --color-maroon: #800020;
+  --color-cream: #f5f0e8;
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Rajdhani', system-ui, sans-serif;
+}
+
+/* ─── Base Styles ───────────────────────────────────────────── */
+@layer base {
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background-color: #f5f0e8;
+    color: #1a1a2e;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-primary);
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  ::selection { background: rgba(212, 160, 23, 0.2); color: #1a3c6e; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #f5f0e8; }
+  ::-webkit-scrollbar-thumb { background: #d4a017; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #b8891a; }
+}
+
+/* ─── Component Utilities ───────────────────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply bg-gold text-navy font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200 hover:bg-gold-dark hover:shadow-gold
+           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-navy text-cream font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200 hover:bg-navy-light hover:shadow-premium
+           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    @apply border-2 border-navy text-navy font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200 hover:bg-navy hover:text-cream
+           active:scale-95;
+  }
+
+  .btn-danger {
+    @apply bg-maroon text-cream font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200 hover:bg-maroon-light hover:shadow-maroon
+           active:scale-95;
+  }
+
+  .card {
+    @apply bg-white rounded-xl2 shadow-premium p-6 border border-border;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-premium-lg hover:-translate-y-0.5;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-border bg-white
+           font-body text-navy placeholder:text-gray-400
+           focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  .badge-navy { @apply badge bg-navy text-cream; }
+  .badge-gold { @apply badge bg-gold text-navy; }
+  .badge-maroon { @apply badge bg-maroon text-cream; }
+  .badge-green { @apply badge bg-emerald-100 text-emerald-800; }
+  .badge-red { @apply badge bg-red-100 text-red-800; }
+  .badge-yellow { @apply badge bg-yellow-100 text-yellow-800; }
+  .badge-gray { @apply badge bg-gray-100 text-gray-800; }
+
+  .page-header {
+    @apply mb-8;
+  }
+
+  .page-title {
+    @apply font-serif text-3xl font-bold text-navy mb-1;
+  }
+
+  .section-title {
+    @apply font-serif text-2xl font-semibold text-navy mb-6;
+  }
+
+  .stat-card {
+    @apply card flex items-center gap-4;
+  }
+
+  .stat-icon {
+    @apply w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-navy to-maroon;
+  }
+
+  .gradient-text-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold to-gold-dark;
+  }
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+@layer utilities {
+  .animate-fade-up { animation: fadeUp 0.6s ease-out forwards; }
+  .animate-slide-in { animation: slideIn 0.4s ease-out forwards; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .glass {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .text-balance { text-wrap: balance; }
+
+  /* Particle canvas */
+  canvas#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
