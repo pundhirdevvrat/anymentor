@@ -1,0 +1,11 @@
+{
+  "name": "anymentor",
+  "version": "1.0.0",
+  "description": "AnyMentor - Multi-tenant SaaS Platform",
+  "scripts": {
+    "setup": "node setup.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

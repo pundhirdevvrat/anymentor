@@ -112,7 +112,7 @@ async function main() {
   console.log(`✅ Owner account: ${owner.email}`);
 
   // ─── Demo Company ─────────────────────────────────────────────
-  const demoSlug = 'demo-academy';
+  const demoSlug = process.env.COMPANY_SLUG || 'demo-academy';
   const freePlan = plans.find(p => p.name === 'FREE');
 
   let demoCompany = await prisma.company.findUnique({ where: { slug: demoSlug } });
@@ -120,7 +120,7 @@ async function main() {
   if (!demoCompany) {
     demoCompany = await prisma.company.create({
       data: {
-        name: 'Demo Academy',
+        name: process.env.COMPANY_NAME || 'Demo Academy',
         slug: demoSlug,
         description: 'A demo company showcasing all AnyMentor features',
         ownerId: owner.id,
@@ -154,13 +154,14 @@ async function main() {
   console.log(`✅ Demo company: ${demoCompany.name} (/${demoCompany.slug})`);
 
   // ─── Demo Company Admin ───────────────────────────────────────
-  const adminEmail = 'admin@demoacademy.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@demoacademy.com';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'AdminPass123!';
   const demoAdmin = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},
     create: {
       email: adminEmail,
-      passwordHash: await bcrypt.hash('AdminPass123!', 12),
+      passwordHash: await bcrypt.hash(adminPassword, 12),
       role: 'COMPANY_ADMIN',
       firstName: 'Demo',
       lastName: 'Admin',

@@ -20,14 +20,27 @@ Each company gets: LMS, E-commerce store, CRM pipeline, Analytics dashboard — 
 
 ---
 
-## Quick Start (Docker)
+## Quick Start — Single Command Setup
 
 ```bash
-# 1. Clone and setup environment
 git clone https://github.com/pundhirdevvrat/anymentor.git
 cd anymentor
+node setup.js
+```
 
-cp backend/.env.example backend/.env
+**Browser automatically opens at `http://localhost:3099`** — fill the form, click Start Setup. Done.
+
+No terminal configuration needed. The wizard:
+- Asks all credentials via browser form
+- Auto-generates JWT secrets
+- Writes `backend/.env`
+- Starts Docker containers
+- Runs DB migrations
+- Seeds initial data
+
+---
+
+## Manual Setup (Docker)
 # Edit backend/.env — add DATABASE_URL, JWT secrets, SMTP, payment keys
 
 # 2. Start all services (PostgreSQL + Redis + Backend + Frontend)
