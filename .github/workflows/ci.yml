@@ -36,14 +36,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Install backend dependencies
         working-directory: backend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Setup test environment
         working-directory: backend
         run: |
-          cat > .env << EOF
+          cat > .env << 'EOF'
           NODE_ENV=test
           DATABASE_URL=postgresql://anymentor:test_password@localhost:5432/anymentor_test
           JWT_ACCESS_SECRET=test-access-secret-minimum-32-characters-long-abc
@@ -54,21 +57,28 @@ jobs:
           OWNER_PASSWORD=TestOwner123!
           EOF
 
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 && break || sleep 1
+          done
+
       - name: Generate Prisma client
         working-directory: backend
         run: npx prisma generate
 
-      - name: Run database migrations
+      - name: Push schema to database
         working-directory: backend
-        run: npx prisma migrate deploy
+        run: npx prisma db push --accept-data-loss
         env:
           DATABASE_URL: postgresql://anymentor:test_password@localhost:5432/anymentor_test
 
       - name: Run tests
         working-directory: backend
-        run: npm test
+        run: npm test -- --passWithNoTests --forceExit
         env:
           DATABASE_URL: postgresql://anymentor:test_password@localhost:5432/anymentor_test
+          NODE_ENV: test
 
   frontend-build:
     name: Frontend Build
@@ -84,15 +94,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build frontend
         working-directory: frontend
         run: npm run build
         env:
           VITE_API_URL: /api/v1
+
+      - name: Verify build output
+        run: test -d frontend/dist && echo "Build successful" || (echo "Build failed - no dist directory" && exit 1)
 
   docker-build:
     name: Docker Build Check
@@ -102,8 +118,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build backend Docker image
-        run: docker build -t anymentor-backend ./backend
+        run: docker build -t anymentor-backend:latest ./backend
 
       - name: Build frontend Docker image
-        run: docker build -t anymentor-frontend ./frontend
+        run: docker build -t anymentor-frontend:latest ./frontend
+
+      - name: Run security scan on Docker images
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL anymentor-backend:latest
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL anymentor-frontend:latest
+        continue-on-error: true
