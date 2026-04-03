@@ -31,6 +31,7 @@ const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders'));
 // Owner pages
 const OwnerCompanies = lazy(() => import('@/pages/owner/OwnerCompanies'));
 const OwnerAnalytics = lazy(() => import('@/pages/owner/OwnerAnalytics'));
+const CompanyDetail  = lazy(() => import('@/pages/owner/CompanyDetail'));
 
 // Portal pages
 const CompanyPortal = lazy(() => import('@/pages/portal/CompanyPortal'));
@@ -92,6 +93,7 @@ export default function App() {
         <Route path="/owner" element={<ProtectedRoute><RoleRoute roles={['OWNER']}><AdminLayout /></RoleRoute></ProtectedRoute>}>
           <Route index element={<Navigate to="/owner/companies" replace />} />
           <Route path="companies" element={<OwnerCompanies />} />
+          <Route path="companies/:id" element={<CompanyDetail />} />
           <Route path="analytics" element={<OwnerAnalytics />} />
         </Route>
 
