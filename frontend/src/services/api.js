@@ -186,6 +186,7 @@ export const supportApi = {
 export const userApi = {
   getAll: (params) => api.get('/users', { params }),
   getById: (id) => api.get(`/users/${id}`),
+  create: (data) => api.post('/auth/register', data),
   update: (id, data) => api.put(`/users/${id}`, data),
   updateProfile: (data) => api.put('/users/profile', data),
   uploadAvatar: (formData) => api.post('/users/profile/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
